@@ -16,6 +16,7 @@ jobs:
         distribution: temurin
         java-version: 11
         cache: gradle
+        name: zygisk-il2cppdumper-ubuntu-latest
     - run: |
         chmod +x ./gradlew
         sed -i 's/moduleDescription = "/moduleDescription = "(${{ github.event.inputs.package_name }}) /g' module.gradle
