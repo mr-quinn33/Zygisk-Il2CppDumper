@@ -23,7 +23,7 @@ jobs:
         ./gradlew :module:assembleRelease
     - uses: actions/upload-artifact@v4
       with:
-        name: zygisk-il2cppdumper-${{ github.event.inputs.package_name }}
+        name: zygisk-il2cppdumper-${{ github.event.inputs.package_name.split('.').pop() }}
         path: out/magisk_module_release/
         pattern: zygisk-il2cppdumper-*
         merge-multiple: true
