@@ -10,8 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout code
     - uses: actions/checkout@v4
     - uses: actions/setup-java@v4
+    - name: Extract package suffix
+      id: extract_package
       with:
         distribution: temurin
         java-version: 11
@@ -21,9 +24,16 @@ jobs:
         sed -i 's/moduleDescription = "/moduleDescription = "(${{ github.event.inputs.package_name }}) /g' module.gradle
         sed -i "s/com.game.packagename/${{ github.event.inputs.package_name }}/g" module/src/main/cpp/game.h
         ./gradlew :module:assembleRelease
+        package_name="${{ github.event.inputs.package_name }}"
+        if [[ "$package_name" == *.* ]]; then
+          suffix="${package_name##*.}"
+        else
+          suffix="$package_name"
+        fi
+        echo "suffix=$suffix" >> $GITHUB_OUTPUT
     - uses: actions/upload-artifact@v4
       with:
-        name: zygisk-il2cppdumper-${{format('{0}', split(github.event.inputs.package_name, '.')[2]}}
+        name: zygisk-il2cppdumper-${{ steps.extract_package.outputs.suffix }}
         path: out/magisk_module_release/
         pattern: zygisk-il2cppdumper-*
         merge-multiple: true
